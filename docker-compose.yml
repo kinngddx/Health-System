@@ -1,0 +1,160 @@
+#services sara likhoge uaha pr
+#docker compose up , docker compose down, docker compose watch
+
+# docker compose ps
+#docker compose logs app
+#docker compose down -v
+
+
+# 2. Port 3000 already use ho rahi hai — koi aur app port 3000 pe chal raha hai tumhare machine pe. yaha pr mera polymarket chl rha hai bc
+
+# Grafana ka port change karo:
+
+
+
+
+# docker compose up se run hoga ab no uvicorn 
+
+
+# docker compose stop app
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    networks:
+      - observability-net
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+        - db
+        - loki
+        - prometheus
+        - tempo
+    develop:
+      watch:
+        - action: sync
+          path: ./app
+          target: /Health_system/app
+        - action: rebuild
+          path: requirements.txt
+
+
+
+
+  tempo:
+    image: grafana/tempo:latest
+    ports:
+      - "3200:3200"
+      - "4317:4317"
+    networks:
+      - observability-net
+    volumes:
+      - ./tempo.yml:/etc/tempo/tempo.yml
+    command: ["-config.file=/etc/tempo/tempo.yml"]
+
+
+
+
+
+
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    networks:
+      - observability-net
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alerts.yml:/etc/prometheus/alerts.yml
+
+
+
+
+
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    networks:
+      - observability-net
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+
+
+
+
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    networks:
+      - observability-net
+    volumes:
+      - ./loki-config.yml:/etc/loki/local-config.yaml
+
+
+
+
+
+
+
+  promtail:
+    image: grafana/promtail:latest
+    networks:
+      - observability-net
+    volumes:
+      - ./promtail-config.yml:/etc/promtail/config.yml
+      - /var/lib/docker/containers:/var/log/docker:ro
+
+
+
+
+
+
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    ports:
+      - "9093:9093"
+    networks:
+      - observability-net
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+
+
+
+
+
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - observability-net
+
+
+
+
+networks:
+  observability-net:
+    driver: bridge
+
+
+
+
+
+volumes:
+  grafana-data:
+  postgres-data:

@@ -1,0 +1,26 @@
+# global:
+#   slack_api_url: 'YOUR_SLACK_WEBHOOK_URL'
+
+# route:
+#   receiver: 'slack-notifications'
+
+# receivers:
+#   - name: 'slack-notifications'
+#     slack_configs:
+#       - channel: '#alerts'
+#         text: 'Alert: {{ .CommonAnnotations.summary }}'
+
+
+
+# http://localhost:9090/rules
+# http://localhost:9090/alerts
+# http://localhost:9093
+
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: "default"
+
+receivers:
+  - name: "default"        

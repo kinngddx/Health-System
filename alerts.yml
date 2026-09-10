@@ -1,0 +1,96 @@
+# sare rules likhenghe alert kb aaygea  isiliye ek file banate hai aur sare rules define krete and p[romethous.yml ko connect krnehe isse take wo jb dkehe req bheeje alermanager ko 
+# to alertmanager conditon dkehakr alert kr dega basically promethous hi alertmanagert k o info bhjeega nad alert.yml ke rule basis pr alert aayega
+
+# groups:
+#   - name: fastapi-alerts
+#     rules:
+#       - alert: HighErrorRate
+#         expr: rate(api_errors_total[2m]) > 0.02
+#         for: 2m
+#         labels:
+#           severity: warning
+#         annotations:
+#           summary: "High API Error Rate"
+
+#       - alert: HighRequestLatency
+#         expr: histogram_quantile(0.95, rate(request_duration_seconds_bucket[5m])) > 0.5
+#         for: 2m
+#         labels:
+#           severity: warning
+#         annotations:
+#           summary: "High Request Latency"
+
+#       - alert: HighDBLatency
+#         expr: histogram_quantile(0.95, rate(db_query_duration_seconds_bucket[5m])) > 2
+#         for: 2m
+#         labels:
+#           severity: warning
+#         annotations:
+#           summary: "Database Query Slow"
+
+#       - alert: HighActiveRequests
+#         expr: active_requests > 10
+#         for: 2m
+#         labels:
+#           severity: warning
+#         annotations:
+#           summary: "Too Many Active Requests"
+
+#       - alert: ServiceDown
+#         expr: up == 0
+#         for: 1m
+#         labels:
+#           severity: critical
+#         annotations:
+#           summary: "FastAPI Service Down"
+
+
+groups:
+  - name: fastapi-alerts
+    rules:
+
+      - alert: HighErrorRate
+        expr: rate(api_errors_total[2m]) > 0.02
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API Error Rate"
+          description: "API error rate exceeded 2%."
+
+      - alert: HighRequestLatency
+        expr: histogram_quantile(0.95, sum(rate(request_duration_seconds_bucket[5m])) by (le)) > 0.5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Request Latency"
+          description: "95th percentile request latency exceeded 500 ms."
+
+      - alert: HighDBLatency
+        expr: histogram_quantile(0.95, sum(rate(db_query_duration_seconds_bucket[5m])) by (le)) > 2
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Database Latency"
+          description: "95th percentile database query latency exceeded 2 seconds."
+
+      - alert: HighActiveRequests
+        expr: active_requests > 10
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Active Requests"
+          description: "More than 10 active requests are being processed."
+
+      - alert: ServiceDown
+        expr: up{job="fastapi-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "FastAPI Service Down"
+          description: "FastAPI service is unreachable."
+          

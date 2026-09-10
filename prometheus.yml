@@ -1,0 +1,24 @@
+# Yeh Prometheus ko batata hai:
+# Kitni baar scrape karna hai
+# Kahan se scrape karna hai (tumhari FastAPI app)
+
+global:
+  scrape_interval: 15s
+
+
+# //define hoga ki ki alert kis condition me bhejn ahi
+rule_files:    
+  - /etc/prometheus/alerts.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+scrape_configs:
+  - job_name: "fastapi-app"
+    static_configs:
+      - targets:
+          - app:8000
+          
