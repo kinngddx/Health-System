@@ -1,4 +1,4 @@
-# 🚀 GenAI-Driven Observability & Incident Automation Platform
+# 🚀 TraceIQ | AI-Powered Observability Platform
 
 An end-to-end observability platform built to monitor API performance, detect system failures, visualize telemetry, and automate incident postmortem generation using Generative AI.
 
@@ -134,16 +134,7 @@ The endpoint collects available telemetry and generates a structured incident re
 * Automated remediation recommendations.
 * Advanced incident correlation.
 
-## 📄 License
-
-Educational project — Not intended for commercial use.
 
 ## 👤 Author
-
 **Umang Chandra**
 
-B.Tech Mechanical Engineering
-National Institute of Technology, Rourkela
-
-* GitHub: [kinngddx](https://github.com/kinngddx)
-* LinkedIn: [Umang Chandra](https://www.linkedin.com/in/umang-chandra-b5324a355/)
